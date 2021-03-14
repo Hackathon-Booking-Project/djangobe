@@ -18,6 +18,7 @@ The authentication is based on [Simple JWT](https://django-rest-framework-simple
 |Content-Type|application/json|
 
 **Get data**
+
 No Get Properties possible / required
 
 **Post data**
@@ -59,12 +60,15 @@ This Endpoint can be used for getting Information about the authenticated user o
 |--|--|
 |Content-Type|application/json|
 |Authorization|Bearer < TOKEN >|
+
 **Note** < TOKEN > should be replaced by the stored usertoken
 
 **Get data**
+
 No Get Properties possible / required
 
 **Post data**
+
 No Post Properties possible / required
 
 **Possible Response Status**
