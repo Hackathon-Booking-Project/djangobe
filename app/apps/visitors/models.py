@@ -38,7 +38,8 @@ class Visitor(models.Model):
     )
     additional = models.CharField(
         verbose_name=_("Additional"),
-        max_length=144
+        max_length=144,
+        blank=True
     )
     creation_timestamp = models.DateTimeField(
         verbose_name=_("Creation Timestamp"),
@@ -85,6 +86,8 @@ class Visitor(models.Model):
             self.key = self.generate_key()
         else:
             if not self.was_present:
+                if self.outgoing:
+                    raise ValidationError("Can't go out without were present.")
                 if self.is_expired:
                     raise ValidationError("Visitor is already expired.")
                 if self.entry:
