@@ -14,8 +14,14 @@ class VisitorCreationForm(forms.ModelForm):
 
 class VisitorChangeForm(forms.ModelForm):
     planed_entry = forms.SplitDateTimeField(widget=admin.widgets.AdminSplitDateTime)
-    entry = forms.SplitDateTimeField(widget=admin.widgets.AdminSplitDateTime)
-    outgoing = forms.SplitDateTimeField(widget=admin.widgets.AdminSplitDateTime)
+    entry = forms.SplitDateTimeField(
+        widget=admin.widgets.AdminSplitDateTime,
+        required=False
+    )
+    outgoing = forms.SplitDateTimeField(
+        widget=admin.widgets.AdminSplitDateTime,
+        required=False
+    )
 
     class Meta:
         model = Visitor

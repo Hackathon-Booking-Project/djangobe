@@ -1,11 +1,13 @@
 import os
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
-from django.core.exceptions import ValidationError
 from django.utils.timezone import now
 
 from datetime import timedelta
 from random import randint
+
+from django.core.exceptions import ValidationError
+from .exceptions import BookingAlreadyExpiredException, InvalidTimeException
 
 
 class Visitor(models.Model):
@@ -88,8 +90,10 @@ class Visitor(models.Model):
             if not self.was_present:
                 if self.outgoing:
                     raise ValidationError("Can't go out without were present.")
-                if self.is_expired:
-                    raise ValidationError("Visitor is already expired.")
+                if not self.is_valid_time():
+                    raise BookingAlreadyExpiredException("Visitor is too early.")
+                if self.is_expired():
+                    raise BookingAlreadyExpiredException("Visitor is already expired.")
                 if self.entry:
                     self.was_present = True
         return super().save(*args, **kwargs)
@@ -100,8 +104,12 @@ class Visitor(models.Model):
             self.generate_key()
         return key
 
-    @property
     def is_expired(self):
-        expiration_time = int(os.getenv("EXPIRATION_TIME_IN_MINUTES", 15))
-        expiration_date = now() + timedelta(minutes=expiration_time)
-        return expiration_date < self.planed_entry
+        expiration_time = int(os.getenv("TIMEDELTA_ACCEPTANCE_IN_MINUTES", 15))
+        expiration_date = self.planed_entry + timedelta(minutes=expiration_time)
+        return expiration_date <= self.entry
+
+    def is_valid_time(self):
+        expiration_time = int(os.getenv("TIMEDELTA_ACCEPTANCE_IN_MINUTES", 15))
+        expiration_date = self.planed_entry - timedelta(minutes=expiration_time)
+        return expiration_date <= self.entry
