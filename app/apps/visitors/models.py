@@ -1,7 +1,6 @@
 import os
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
-from django.utils.timezone import now
 
 from datetime import timedelta
 from random import randint
@@ -91,7 +90,7 @@ class Visitor(models.Model):
                 if self.outgoing:
                     raise ValidationError("Can't go out without were present.")
                 if not self.is_valid_time():
-                    raise BookingAlreadyExpiredException("Visitor is too early.")
+                    raise InvalidTimeException("Visitor is too early.")
                 if self.is_expired():
                     raise BookingAlreadyExpiredException("Visitor is already expired.")
                 if self.entry:
