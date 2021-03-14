@@ -6,8 +6,8 @@ from django.core.exceptions import ValidationError
 
 
 class Department(models.Model):
-    location = models.CharField(
-        verbose_name=_("Location"),
+    department_identifier = models.CharField(
+        verbose_name=_("Department Identifier"),
         max_length=144,
         unique=True,
         db_index=True
@@ -19,6 +19,10 @@ class Department(models.Model):
     street_no = models.CharField(
         verbose_name=_("Street Number"),
         max_length=10
+    )
+    city = models.CharField(
+        verbose_name=_("City"),
+        max_length=144
     )
     postcode = models.CharField(
         verbose_name=_("Postcode"),

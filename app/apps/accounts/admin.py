@@ -83,8 +83,8 @@ class UserAdmin(BaseUserAdmin):
 
 @admin.register(Department)
 class DepartmentAdmin(admin.ModelAdmin):
-    list_display = ('location', )
-    search_fields = ('location', )
+    list_display = ('department_identifier', )
+    search_fields = ('department_identifier', 'location', )
 
 
 admin.site.site_header = "Buchungssystem"
