@@ -16,8 +16,8 @@ services:
       - ALLOWED_HOSTS=*
       - POSTGRES_HOST=postgresdb
       - POSTGRES_PORT=5432
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=adminpw
       - POSTGRES_DATABASE=app
       - WAIT_HOSTS=postgresdb:5432
       - WAIT_HOSTS_TIMEOUT=100
@@ -29,7 +29,7 @@ services:
       - |
         ./wait
         python app/manage.py migrate
-        python app/manage.py runserver
+        python app/manage.py runserver 0.0.0.0:8000
     volumes:
       - ./app:/app
 
