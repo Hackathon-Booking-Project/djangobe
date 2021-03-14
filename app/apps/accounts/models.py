@@ -5,6 +5,34 @@ from django.template.defaultfilters import slugify
 from django.core.exceptions import ValidationError
 
 
+class Department(models.Model):
+    location = models.CharField(
+        verbose_name=_("Location"),
+        max_length=144,
+        unique=True,
+        db_index=True
+    )
+    street = models.CharField(
+        verbose_name=_("Street"),
+        max_length=144
+    )
+    street_no = models.CharField(
+        verbose_name=_("Street Number"),
+        max_length=10
+    )
+    postcode = models.CharField(
+        verbose_name=_("Postcode"),
+        max_length=9
+    )
+    additional = models.CharField(
+        verbose_name=_("Additional"),
+        max_length=144
+    )
+
+    def __str__(self):
+        return self.location
+
+
 class User(AbstractBaseUser):
     from .managers import UserManager
 
@@ -29,6 +57,14 @@ class User(AbstractBaseUser):
     is_active = models.BooleanField(
         verbose_name=_("Is Active"),
         default=True
+    )
+    department = models.ForeignKey(
+        to=Department,
+        on_delete=models.CASCADE,
+        related_name="users",
+        verbose_name=_("Department"),
+        blank=True,
+        null=True
     )
 
     USERNAME_FIELD = 'email'

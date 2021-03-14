@@ -2,7 +2,7 @@ from django.contrib import admin
 from django import forms
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
-from .models import User
+from .models import User, Department
 
 
 class UserCreationForm(forms.ModelForm):
@@ -81,4 +81,10 @@ class UserAdmin(BaseUserAdmin):
     filter_horizontal = ()
 
 
-admin.site.site_header = "I-Auftragssystem Online"
+@admin.register(Department)
+class DepartmentAdmin(admin.ModelAdmin):
+    list_display = ('location', )
+    search_fields = ('location', )
+
+
+admin.site.site_header = "Buchungssystem"
