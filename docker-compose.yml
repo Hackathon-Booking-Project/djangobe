@@ -1,0 +1,45 @@
+version: "3"
+
+volumes:
+  postgresdb:
+
+services:
+  djangobackend:
+    build: .
+    ports:
+      - "8000:8000"
+    depends_on:
+      - postgresdb
+    environment:
+      - SECRET_KEY=SUPERSECRET
+      - DEBUG=true
+      - ALLOWED_HOSTS=*
+      - POSTGRES_HOST=postgresdb
+      - POSTGRES_PORT=5432
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DATABASE=app
+      - WAIT_HOSTS=postgresdb:5432
+      - WAIT_HOSTS_TIMEOUT=100
+      - WAIT_SLEEP_INTERVAL=5
+      - WAIT_HOST_CONNECT_TIMEOUT=5
+    command:
+      - sh
+      - -c
+      - |
+        ./wait
+        python app/manage.py migrate
+        python app/manage.py runserver
+    volumes:
+      - ./app:/app
+
+  postgresdb:
+    image: postgres:alpine
+    ports:
+      - "54320:5432"
+    environment: 
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DATABASE=app
+    volumes:
+      - postgresdb:/var/lib/postgresql/data/
