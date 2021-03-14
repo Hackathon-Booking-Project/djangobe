@@ -1,6 +1,6 @@
 # API Documenttion
 - [Authentication](#authentication)
-
+- [Verify Token / Get User Info](#verify_token)
 
 <a name="authentication"></a>
 
@@ -42,3 +42,43 @@ No Get Properties possible / required
 ```
 
 We are not working with refresh key currently. The User will be identified by `access` property.
+
+
+<a name="verify_token"></a>
+
+## Verify Token / Get User Info
+This Endpoint can be used for getting Information about the authenticated user or just verifying that the used Key is still valid.
+
+**Request**
+|Type|Path|
+|--|--|
+|GET|/api/accounts/auth_user_info|
+
+**Header**
+|Key|Value|
+|--|--|
+|Content-Type|application/json|
+|Authorization|Bearer < TOKEN >|
+**Note** < TOKEN > should be replaced by the stored usertoken
+
+**Get data**
+No Get Properties possible / required
+
+**Post data**
+No Post Properties possible / required
+
+**Possible Response Status**
+|Code|Message|Description|
+|--|--|--|
+| 200 | OK | Token is Valid |
+| 401 | Unauthorized | Token is invalid and should be deleted from Localstorage OR wrong naming was used for sending token to API |
+
+**Successfull Response Example**
+```
+{
+  "email":  "admin@root.com",
+  "first_name":  "Admin",
+  "last_name":  "Root",
+  "is_admin":  true
+}
+```

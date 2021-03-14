@@ -9,4 +9,9 @@ urlpatterns = [
         TokenObtainPairView.as_view(),
         name='token_obtain_pair'
     ),
+    path(
+        'auth_user_info',
+        views.VerifyTokenAPI.as_view(),
+        name='accountsVerifyTokenAPI'
+    ),
 ]
