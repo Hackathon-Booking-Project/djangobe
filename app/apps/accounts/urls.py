@@ -5,7 +5,7 @@ from . import views
 
 urlpatterns = [
     path(
-        'token',
+        'get_token',
         TokenObtainPairView.as_view(),
         name='token_obtain_pair'
     ),
