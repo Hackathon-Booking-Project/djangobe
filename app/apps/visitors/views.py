@@ -6,6 +6,7 @@ from django.db.models import Q
 from datetime import timedelta, datetime
 from django.conf import settings
 from .models import Visitor
+from .serializers import SimpleDateSerializer
 
 
 BOOKING_RULES = settings.BOOKING_RULES
@@ -37,7 +38,7 @@ def timestamp_is_bookable(timestamp):
 
 
 class TerminAPI(GenericAPIView):
-    def retrieve_day_planning(self, request, date, *args, **kwargs):
+    def get_day_planning(self, date):
         current_time = get_datetime_from_date_and_time_objects(
             date=datetime.strptime(date, "%Y-%m-%d"),
             time=BOOKING_RULES["opening"]
@@ -55,9 +56,9 @@ class TerminAPI(GenericAPIView):
                 "is_bookable": is_bookable
             })
             current_time = current_time + timedelta(minutes=BOOKING_RULES["frequence"])
-        return Response(data=times, status=status.HTTP_200_OK)
+        return times
 
-    def retrieve_date_planning(self, request, *args, **kwargs):
+    def get_date_planning(self):
         current_timestamp = now()
         dates = []
         for day in range(BOOKING_RULES["max_days_in_future"]):
@@ -80,7 +81,17 @@ class TerminAPI(GenericAPIView):
                 "is_bookable": is_bookable
             })
             current_timestamp = current_timestamp + timedelta(days=1)
-        return Response(data=dates, status=status.HTTP_200_OK)
+        return dates
+
+    def retrieve_day_planning(self, request, date, *args, **kwargs):
+        serializer = SimpleDateSerializer(data={"date": date})
+        serializer.is_valid(raise_exception=True)
+        day_planning = self.get_day_planning(date=date)
+        return Response(data=day_planning, status=status.HTTP_200_OK)
+
+    def retrieve_date_planning(self, request, *args, **kwargs):
+        date_planning = self.get_date_planning()
+        return Response(data=date_planning, status=status.HTTP_200_OK)
 
     def get(self, request, *args, **kwargs):
         date = request.GET.get("date", None)
