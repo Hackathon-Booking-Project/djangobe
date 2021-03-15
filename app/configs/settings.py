@@ -1,6 +1,7 @@
 import os
 from pathlib import Path
 from dotenv import load_dotenv
+from datetime import datetime
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -103,6 +104,17 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+
+
+BOOKING_RULES = {
+    "max_days_in_future": int(os.getenv("MAX_NUMBER_OF_DAYS_FOR_FUTURED_PLANNING", 7)),
+    "max_visitor_capacity": int(os.getenv("MAX_VISITOR_CAPACITY", 20)),
+    "inacuracy": int(os.getenv("TIMEDELTA_ACCEPTANCE_IN_MINUTES", 15)),
+    "opening": datetime.strptime(os.getenv("OPENING", "10:00"), "%H:%M").time(),
+    "closing": datetime.strptime(os.getenv("CLOSING", "18:00"), "%H:%M").time(),
+    "expected_residence": int(os.getenv("EXPECTED_VISITOR_RESIDENCE_TIME_IN_MINUTES", 60)),
+    "frequence": int(os.getenv("ENTRY_FREQUENCE_IN_MINUTES", 30)),
+}
 
 
 # Internationalization
