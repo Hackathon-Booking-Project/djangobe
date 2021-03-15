@@ -1,8 +1,9 @@
-from datetime import datetime
+from django.utils.timezone import now
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 from .models import Visitor
 from .utils import timestamp_is_bookable
+from .exceptions import InvalidTimeException, BookingAlreadyExpiredException
 
 
 class SimpleDateSerializer(serializers.Serializer):
@@ -32,3 +33,38 @@ class BookingSerializer(serializers.ModelSerializer):
             )
         else:
             return True
+
+
+class VisitorAccessSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Visitor
+        fields = ["key", "department", "entry", "outgoing", ]
+        extra_kwargs = {
+            "key": {"read_only": True},
+            "department": {"read_only": True},
+            "entry": {"read_only": True},
+            "outgoing": {"read_only": True}
+        }
+
+    def update(self, instance, validated_data):
+        if not instance.was_present:
+            instance.entry = now()
+        else:
+            instance.outgoing = now()
+        try:
+            instance.save()
+        except InvalidTimeException:
+            raise ValidationError(
+                detail={
+                    "error": "too_early",
+                    "planed_entry": instance.planed_entry
+                }
+            )
+        except BookingAlreadyExpiredException:
+            raise ValidationError(
+                detail={
+                    "error": "booking_expired",
+                    "planed_entry": instance.planed_entry
+                }
+            )
+        return instance

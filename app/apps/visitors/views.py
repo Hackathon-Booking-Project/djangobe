@@ -1,10 +1,12 @@
 from rest_framework import status
 from rest_framework.response import Response
-from rest_framework.generics import GenericAPIView
+from rest_framework.permissions import IsAuthenticated
+from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework.generics import GenericAPIView, UpdateAPIView, get_object_or_404
 from django.utils.timezone import now
 from datetime import timedelta, datetime
 from .models import Visitor
-from .serializers import SimpleDateSerializer, BookingSerializer
+from .serializers import SimpleDateSerializer, BookingSerializer, VisitorAccessSerializer
 from .utils import (
     get_datetime_from_date_and_time_objects, datetime_is_not_expired,
     timestamp_is_bookable, BOOKING_RULES
@@ -81,3 +83,20 @@ class TerminAPI(GenericAPIView):
 
     def post(self, request, *args, **kwargs):
         return self.create_booking(request, *args, **kwargs)
+
+
+class VisitorAccessAPI(UpdateAPIView):
+    queryset = Visitor.objects
+    serializer_class = VisitorAccessSerializer
+    authentication_classes = (JWTAuthentication, )
+    permission_classes = (IsAuthenticated, )
+
+    def get_object(self):
+        queryset = self.filter_queryset(self.get_queryset())
+        filter_kwargs = {
+            "department": self.request.user.department,
+            "key": self.kwargs["key"]
+        }
+        obj = get_object_or_404(queryset, **filter_kwargs)
+        self.check_object_permissions(self.request, obj)
+        return obj

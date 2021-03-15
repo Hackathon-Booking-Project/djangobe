@@ -8,4 +8,9 @@ urlpatterns = [
         views.TerminAPI.as_view(),
         name='visitorsTerminAPI'
     ),
+    path(
+        'access/<int:key>',
+        views.VisitorAccessAPI.as_view(),
+        name='visitorsVisitorAccessAPI'
+    )
 ]

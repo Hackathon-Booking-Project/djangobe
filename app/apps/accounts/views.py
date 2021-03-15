@@ -4,6 +4,7 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 from .models import User
 from .serializers import UserSerializer
 
+
 class VerifyTokenAPI(RetrieveAPIView):
     queryset = User.objects
     serializer_class = UserSerializer
